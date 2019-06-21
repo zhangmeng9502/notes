@@ -1,0 +1,15 @@
+# vim /etc/ansible/ansible.cfg
+#
+# [defaults]
+# library = the path of get_bond_mapping.py
+
+- name: test my new module
+  hosts: localhost
+  tasks:
+    - name: run the new module
+      get_bond_mapping:
+        network_config_path: "/root/ansible_test/config.json"
+      register: testout
+    - name: dump test output
+      debug:
+        msg: '{{ testout }}'
