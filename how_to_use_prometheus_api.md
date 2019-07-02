@@ -1,14 +1,26 @@
 ## data model and promQL
-prometheus metric 是由一个度量名称和一组标签组成，并且由一个度量名称和一组标签唯一标识的时间序列: < metric name >{ < label name >=< label value >, ...}。
+prometheus metric 是由一个度量名称和一组标签组成，并且由一个度量名称和一组标签唯一标识的时间序列: 
+< metric name >{ < label name >=< label value >, ...}。
 
-例如：某个prometheus job/exporter的状态由'up'这个度量名称和{job='job1',instance='instance1'...}一组标签唯一标识。标签可以用于条件筛选以及数据聚合等操作。例如up{hostname="overcloud-controller-0.localdomain"}表示主机overcloud-controller-0下所有job/exporter状态。
+例如：
+up{hostname="overcloud-controller-0.localdomain",instance="172.17.1.18:9100",job="node_exporter",node_role="control"}
+上面这个表达式中 
+    up 代表度量名称
+    {hostname="overcloud-controller-0.localdomain"，....} 代表标签组；标签可以用于条件筛选以及数据聚合等操作。
 
-Prometheus提供了PromQL用于查询数据。query=up{hostname="overcloud-controller-0.localdomain"}，prometheus返回主机overcloud-controller-0 下所有job/exporter的状态，这就是prometheus中的条件语句。若query=up，prometheus将返回所有job/exporter的状态。
+
+Prometheus提供了PromQL用于查询数据。
+比如：要查询overcloud-controller-0.localdomain 这台机器的状态，可以用下面这种句式
+query=up{hostname="overcloud-controller-0.localdomain"}
+若没有标签组，直接用度量名称prometheus将返回所有主机的job/exporter的状态。
+比如：
+query=up
 
 ## how to use prometheus api
 我们在Prometheus服务器上的/api/v1下可以访问当前稳定的HTTP API, prometheus返回的数据格式为json，下边的返回值中value=0表明该job/exporter状态是down，value=1表明该job/exporter正常工作。
 
-调用API获取主机overcloud-controller-0 下所有job/exporter的状态：http://192.168.2.120:9091/api/v1/query?query=up{overcloud-controller-0.localdomain}
+调用API获取主机overcloud-controller-0 下所有job/exporter的状态：
+http://192.168.2.120:9091/api/v1/query?query=up{overcloud-controller-0.localdomain}
 
 返回值:
 
